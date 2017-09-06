@@ -1,0 +1,11 @@
+nav.navbar.navbar-dark.bg-dark.navbar-expand-lg
+  a.navbar-brand.mr-auto(href='#') Products
+  ul.nav.navbar-nav.navbar-right
+    .dropdown.show
+      a#dropdownMenuLink.btn.btn-secondary.dropdown-toggle(href='#', data-toggle='dropdown')
+        i.fa.fa-user
+        |  #{user}
+      .dropdown-menu.dropdown-menu-right
+        a.dropdown-item(href='#')
+          i.fa.fa.fw.fa-sign-out
+          |  Log Out

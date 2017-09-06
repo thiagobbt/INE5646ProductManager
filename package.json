@@ -1,0 +1,22 @@
+{
+  "name": "INE5646ProductManager",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Thiago Barbato <thiagocbbt@gmail.com>",
+  "homepage": "https://github.com/thiagobbt/INE5646ProductManager",
+  "bugs": "https://github.com/thiagobbt/INE5646ProductManager/issues",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
+    "pug": "^2.0.0-rc.3"
+  },
+  "repository": "thiagobbt/INE5646ProductManager",
+  "scripts": {
+    "start": "node index.js"
+  }
+}

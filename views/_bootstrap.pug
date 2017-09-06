@@ -1,0 +1,17 @@
+doctype html
+html(lang='en')
+  head
+    title Test - #{title}
+    meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    block styles
+      link(rel='stylesheet', href='/css/bootstrap.min.css')
+      link(rel='stylesheet', href='/css/font-awesome.min.css')
+      link(rel='stylesheet', href='/css/base.css')
+  body
+    block header
+      include header
+    block content
+    block foot
+      script(type='text/javascript', src='/js/jquery-3.0.0.min.js')
+      script(type='text/javascript', src='/js/popper.min.js')
+      script(type='text/javascript', src='/js/bootstrap.min.js')
