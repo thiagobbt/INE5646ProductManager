@@ -1,3 +1,46 @@
 extends _bootstrap
 block content
-	h1 #{message}
+  -function prettyDate(timestamp){
+    -return new Date(timestamp)
+  -}
+
+  //h1 #{message}
+  table.table.table-striped.table-hover
+    thead
+      tr
+        th ID
+        th Name
+        th Enabled
+        th Last Modified
+        th Actions
+    tbody
+      each product in products
+        tr
+          td=product.id
+          td=product.name
+          td
+            if product.enabled
+              i.fa.fa-check
+            else
+              i.fa.fa-times
+          td=prettyDate(product.updatedAt)
+          td
+            button.btn.btn-primary
+              i.fa.fa-pencil
+            button(data-toggle="modal", data-target="#deleteModal", onclick="$('#modalDelBtn').unbind('click'); $('#modalDelBtn').click(function() {deleteProduct('" + product.id + "')}); $('#modalDelID').text('" + product.id + "');").btn.btn-danger
+              i.fa.fa-trash-o
+
+  #deleteModal.modal.hide.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title Delete product?
+          button.close(data-dismiss='modal')
+            i.fa.fa-times-circle
+        .modal-body
+          p Do you really want to delete product with ID 
+            span#modalDelID
+            | ?
+        .modal-footer
+          button.btn.btn-secondary(data-dismiss='modal') Cancel
+          button#modalDelBtn.btn.btn-danger Delete

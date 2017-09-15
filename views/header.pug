@@ -1,11 +1,14 @@
-nav.navbar.navbar-dark.bg-dark.navbar-expand-lg
+nav.navbar.navbar-dark.bg-dark.navbar-expand
   a.navbar-brand.mr-auto(href='#') Products
   ul.nav.navbar-nav.navbar-right
-    .dropdown.show
-      a#dropdownMenuLink.btn.btn-secondary.dropdown-toggle(href='#', data-toggle='dropdown')
-        i.fa.fa-user
+    .btn-group.open
+      button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown')
+        i.fa.fa-user.fa-fw
         |  #{user}
       .dropdown-menu.dropdown-menu-right
         a.dropdown-item(href='#')
-          i.fa.fa.fw.fa-sign-out
-          |  Log Out
+          i.fa.fa-pencil.fa-fw
+          |  Edit
+        a.dropdown-item(href='#')
+          i.fa.fa-sign-out.fa-fw
+          |  Sign Out
