@@ -25,22 +25,63 @@ block content
               i.fa.fa-times
           td=prettyDate(product.updatedAt)
           td
-            button.btn.btn-primary
+            button(data-toggle="modal", data-target="#editModal", prodID=product.id).btn.btn-primary.btn-edit-product
               i.fa.fa-pencil
-            button(data-toggle="modal", data-target="#deleteModal", onclick="$('#modalDelBtn').unbind('click'); $('#modalDelBtn').click(function() {deleteProduct('" + product.id + "')}); $('#modalDelID').text('" + product.id + "');").btn.btn-danger
+            button(data-toggle="modal", data-target="#deleteModal").btn.btn-danger.btn-delete-product
               i.fa.fa-trash-o
 
   #deleteModal.modal.hide.fade(tabindex='-1', role='dialog')
     .modal-dialog(role='document')
       .modal-content
         .modal-header
-          h5#exampleModalLabel.modal-title Delete product?
+          h5#deleteModalLabel.modal-title Delete product?
           button.close(data-dismiss='modal')
             i.fa.fa-times-circle
         .modal-body
           p Do you really want to delete product with ID 
-            span#modalDelID
+            span#deleteModalID
             | ?
         .modal-footer
           button.btn.btn-secondary(data-dismiss='modal') Cancel
-          button#modalDelBtn.btn.btn-danger Delete
+          button#deleteModalBtn.btn.btn-danger Delete
+
+  #editModal.modal.hide.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#editModalLabel.modal-title Edit product 
+            span#editModalID
+          button.close(data-dismiss='modal')
+            i.fa.fa-times-circle
+        .modal-body
+          form
+            .form-group
+              label(for='editModalName').font-weight-bold Product Name
+              input#editModalName.form-control(type='text')
+            .checkbox
+              label.font-weight-bold
+                input#editModalEnable(type='checkbox')
+                |  Enable
+        .modal-footer
+          button.btn.btn-secondary(data-dismiss='modal') Cancel
+          button#editModalBtn.btn.btn-primary Edit
+
+  #addModal.modal.hide.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#addModalLabel.modal-title Add product
+          button.close(data-dismiss='modal')
+            i.fa.fa-times-circle
+        .modal-body
+          form
+            .form-group
+              label(for='addModalName').font-weight-bold Product Name
+              input#addModalName.form-control(type='text')
+            .checkbox
+              label.font-weight-bold
+                input#addModalEnable(type='checkbox', checked=true)
+                |  Enable
+        .modal-footer
+          button.btn.btn-secondary(data-dismiss='modal') Cancel
+          button#addModalBtn.btn.btn-primary Add

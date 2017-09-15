@@ -2,6 +2,9 @@ nav.navbar.navbar-dark.bg-dark.navbar-expand
   a.navbar-brand.mr-auto(href='#') Products
   ul.nav.navbar-nav.navbar-right
     .btn-group.open
+      button(data-toggle="modal", data-target="#addModal").btn.btn-info
+        i.fa.fa-plus
+        |  Add Product
       button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown')
         i.fa.fa-user.fa-fw
         |  #{user}

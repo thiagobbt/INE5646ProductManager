@@ -143,6 +143,24 @@ app.put('/api/products/:id', function (req, res) {
 	});
 })
 
+app.post('/api/product', function (req, res) {
+	if (req.body.name == null) {
+		res.status(400).send(errorMessages[400] + "\nProduct name was not provided");
+	}
+
+	var enabled = req.body.enabled || true;
+
+	var table = new Product({name: req.body.name, enabled: enabled});
+
+	table.save(function(err) {
+		if (err == null) {
+			res.status(201).location('/api/products/' + table._id).json(table);
+		} else {
+			res.status(400).send(errorMessages[400]);
+		}
+	});
+})
+
 app.post('/api/createTable', function (req, res) {
 	var table = new Product({name: "Table"});
 
