@@ -9,3 +9,19 @@ button {
 .table > tbody > tr > td {
     vertical-align: middle;
 }
+
+.table-collapse-2 {
+	word-break: break-all;
+}
+
+@media only screen and (max-width: 768px) {
+	.table-collapse {
+		display: none;
+	}
+}
+
+@media only screen and (max-width: 430px) {
+	.table-collapse-2 {
+		display: none;
+	}
+}

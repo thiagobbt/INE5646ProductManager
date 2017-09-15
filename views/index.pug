@@ -8,21 +8,23 @@ block content
   table.table.table-striped.table-hover
     thead
       tr
-        th ID
+        th.table-collapse-2 ID
         th Name
         th Enabled
+        th.table-collapse Created At
         th Last Modified
         th Actions
     tbody
       each product in products
         tr
-          td=product.id
+          td.table-collapse-2=product.id
           td=product.name
           td
             if product.enabled
               i.fa.fa-check
             else
               i.fa.fa-times
+          td.table-collapse=prettyDate(product.createdAt)
           td=prettyDate(product.updatedAt)
           td
             button(data-toggle="modal", data-target="#editModal", prodID=product.id).btn.btn-primary.btn-edit-product
