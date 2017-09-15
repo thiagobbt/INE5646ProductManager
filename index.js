@@ -13,7 +13,7 @@ mongoose.connect(process.env.MONGOLAB_URI, {useMongoClient: true}, function (err
 });
 
 const app = express()
-const listen_port = 80
+const listen_port = process.env.PORT || 5000
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
