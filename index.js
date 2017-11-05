@@ -2,6 +2,12 @@ const express = require('express')
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose')
 
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const oauth2 = require('./lib/oauth2');
+
 mongoose.Promise = global.Promise;
 
 mongoose.connect(process.env.MONGOLAB_URI, {useMongoClient: true}, function (error) {
@@ -15,15 +21,37 @@ mongoose.connect(process.env.MONGOLAB_URI, {useMongoClient: true}, function (err
 const app = express()
 const listen_port = process.env.PORT || 5000
 
+
+// Configure the session and session storage.
+const sessionConfig = {
+	resave: false,
+	saveUninitialized: false,
+	secret: process.env.SESSION_SECRET,
+	signed: true,
+	store: new MongoStore({ mongooseConnection: mongoose.connection })
+};
+
+app.use(session(sessionConfig));
+
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.locals.pretty = true;
+
+// OAuth2
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(oauth2.router);
 
 var productSchema = new mongoose.Schema({
 	name		: String,
 	enabled		: { type: Boolean, default: true }
 }, {
 	timestamps: true
+});
+
+var userSchema = new mongoose.Schema({
+	googleID	: String,
+	authorized	: { type: Boolean, default: false }
 });
 
 productSchema.virtual('id').get(function(){
@@ -35,12 +63,13 @@ productSchema.set('toJSON', {
 });
 
 productSchema.options.toJSON.transform = function (doc, ret, options) {
-  delete ret._id;
-  delete ret.__v;
-  return ret;
+	delete ret._id;
+	delete ret.__v;
+	return ret;
 }
 
 var Product = mongoose.model('Products', productSchema);
+var User = mongoose.model('Users', userSchema);
 
 const errorMessages = {
 	400: "400 Bad Request",
@@ -55,15 +84,42 @@ function getKeyByValue(object, value) {
 app.set('view engine', 'pug')
 app.use(express.static('public'))
 app.locals.basedir = process.env.PWD
+app.use(oauth2.template);
 
-app.get('/', function (req, res) {
-	Product.find(function (err, products){
+app.get('/', (req, res) => {
+	if (!req.user) {
+		res.redirect('/login');
+	} else {
+		res.redirect('/home');
+	}
+});
+
+app.get('/login', (req, res) => {
+	if (!req.user) {
+		res.render('login', {title: 'Login'});
+	} else {
+		res.redirect('/home');
+	}
+});
+
+app.get('/home', oauth2.required, (req, res) => {
+	User.findOne({googleID: req.user.id}, 'authorized', function (err, user) {
 		if (err == null) {
-			res.render('index', { title: 'Products', message: 'Hello there!', user: 'John Doe', products: products })
+			if (user != null && user.authorized) {
+				Product.find(function (err, products){
+					if (err == null) {
+						res.render('index', { title: 'Products', products: products })
+					} else {
+						res.status(400).send(errorMessages[400]);
+					}
+				});
+			} else {
+				res.render('index', { title: 'Products' });
+			}
 		} else {
 			res.status(400).send(errorMessages[400]);
 		}
-	});
+	})
 })
 
 app.get('/api/products/since/:since', function(req, res) {
@@ -167,6 +223,50 @@ app.post('/api/createTable', function (req, res) {
 	table.save(function(err) {
 		if (err == null) {
 			res.status(201).location('/api/products/' + table._id).json(table);
+		} else {
+			res.status(400).send(errorMessages[400]);
+		}
+	});
+})
+
+app.all('/api/user/:id/authorize', function (req, res) {
+	User.findOne({googleID: req.params.id}, function(err, user) {
+		if (err == null) {
+			if (user == null) {
+				user = new User({googleID: req.params.id, authorized: true});
+			} else {
+				user.authorized = true;
+			}
+
+			user.save((err, user) => {
+				if (err) {
+					res.status(500).send(errorMessages[500]);
+				} else {
+					res.status(204).send({});
+				}
+			});
+		} else {
+			res.status(400).send(errorMessages[400]);
+		}
+	});
+})
+
+app.all('/api/user/:id/deauthorize', function (req, res) {
+	User.findOne({googleID: req.params.id}, function(err, user) {
+		if (err == null) {
+			if (user == null) {
+				user = new User({googleID: req.params.id, authorized: false});
+			} else {
+				user.authorized = false;
+			}
+
+			user.save((err, user) => {
+				if (err) {
+					res.status(500).send(errorMessages[500]);
+				} else {
+					res.status(204).send({});
+				}
+			});
 		} else {
 			res.status(400).send(errorMessages[400]);
 		}

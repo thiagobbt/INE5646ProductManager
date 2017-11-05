@@ -25,3 +25,12 @@ button {
 		display: none;
 	}
 }
+
+.display-name {
+	margin-left: 5px;
+}
+
+.display-link {
+	text-decoration: none;
+	color: white;
+}

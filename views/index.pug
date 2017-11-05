@@ -5,32 +5,37 @@ block content
   -}
 
   //h1 #{message}
-  table.table.table-striped.table-hover
-    thead
-      tr
-        th.table-collapse-2 ID
-        th Name
-        th Enabled
-        th.table-collapse Created At
-        th Last Modified
-        th Actions
-    tbody
-      each product in products
+  if products
+    table.table.table-striped.table-hover
+      thead
         tr
-          td.table-collapse-2=product.id
-          td=product.name
-          td
-            if product.enabled
-              i.fa.fa-check
-            else
-              i.fa.fa-times
-          td.table-collapse=prettyDate(product.createdAt)
-          td=prettyDate(product.updatedAt)
-          td
-            button(data-toggle="modal", data-target="#editModal", prodID=product.id).btn.btn-primary.btn-edit-product
-              i.fa.fa-pencil
-            button(data-toggle="modal", data-target="#deleteModal").btn.btn-danger.btn-delete-product
-              i.fa.fa-trash-o
+          th.table-collapse-2 ID
+          th Name
+          th Enabled
+          th.table-collapse Created At
+          th Last Modified
+          th Actions
+      tbody
+        each product in products
+          tr
+            td.table-collapse-2=product.id
+            td=product.name
+            td
+              if product.enabled
+                i.fa.fa-check
+              else
+                i.fa.fa-times
+            td.table-collapse=prettyDate(product.createdAt)
+            td=prettyDate(product.updatedAt)
+            td
+              button(data-toggle="modal", data-target="#editModal", prodID=product.id).btn.btn-primary.btn-edit-product
+                i.fa.fa-pencil
+              button(data-toggle="modal", data-target="#deleteModal").btn.btn-danger.btn-delete-product
+                i.fa.fa-trash-o
+  else
+    p.text-center
+      i.fa.fa-exclamation-triangle &nbsp;
+      | User "#{profile.id}" is not authorized to view products.
 
   #deleteModal.modal.hide.fade(tabindex='-1', role='dialog')
     .modal-dialog(role='document')
