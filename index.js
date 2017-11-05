@@ -82,7 +82,7 @@ function getKeyByValue(object, value) {
 }
 
 app.set('view engine', 'pug')
-app.use(express.static('public'))
+app.use(express.static('public', {maxAge: '1d'}))
 app.locals.basedir = process.env.PWD
 app.use(oauth2.template);
 
