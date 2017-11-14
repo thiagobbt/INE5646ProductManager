@@ -1,6 +1,7 @@
-const express = require('express')
+const express = require('express');
+const graphqlHTTP = require('express-graphql');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
 
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
@@ -42,40 +43,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(oauth2.router);
 
-var productSchema = new mongoose.Schema({
-	name		: String,
-	enabled		: { type: Boolean, default: true }
-}, {
-	timestamps: true
-});
-
-var userSchema = new mongoose.Schema({
-	googleID	: String,
-	authorized	: { type: Boolean, default: false }
-});
-
-productSchema.virtual('id').get(function(){
-	return this._id.toHexString();
-});
-
-productSchema.set('toJSON', {
-	virtuals: true
-});
-
-productSchema.options.toJSON.transform = function (doc, ret, options) {
-	delete ret._id;
-	delete ret.__v;
-	return ret;
-}
-
-var Product = mongoose.model('Products', productSchema);
-var User = mongoose.model('Users', userSchema);
-
 const errorMessages = {
 	400: "400 Bad Request",
 	404: "404 Not Found",
 	500: "500 Internal Server Error"
 }
+
+var Product = require('./mongoose/product').Product;
+var User = require('./mongoose/user').User;
 
 function getKeyByValue(object, value) {
 	return Object.keys(object).find(key => object[key] === value);
@@ -85,6 +60,15 @@ app.set('view engine', 'pug')
 app.use(express.static('public', {maxAge: '1d'}))
 app.locals.basedir = process.env.PWD
 app.use(oauth2.template);
+
+var graphQLSchema = require('./graphql/Schema');
+var schema = graphQLSchema.schema;
+var getProjection = graphQLSchema.getProjection;
+
+app.use('/graphql', graphqlHTTP (req => ({
+	schema,
+	graphiql: true
+})))
 
 app.get('/', (req, res) => {
 	if (!req.user) {
